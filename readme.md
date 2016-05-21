@@ -157,7 +157,13 @@ cd ~/projects/catfabulator && git diff
 
 ### Running tests
 
-You'll need to install [bats](https://github.com/sstephenson/bats#installing-bats-from-source), the Bash automated testing system. It's also available as `brew install bats`
+You'll need to install [bats](https://github.com/sstephenson/bats#installing-bats-from-source), the Bash automated testing system. It's also available as `brew install bats`, and apt-get via:
+
+```sh
+sudo add-apt-repository ppa:duggan/bats
+sudo apt-get update
+sudo apt-get install bats
+```
 
 ```sh
 git submodule sync
