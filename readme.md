@@ -89,6 +89,7 @@ By default all the configs are true. You can turn any off by running:
 git config --bool --global diff-so-fancy.markEmptyLines false
 git config --bool --global diff-so-fancy.changeHunkIndicators false
 git config --bool --global diff-so-fancy.stripLeadingSymbols false
+git config --bool --global diff-so-fancy.showStartLine false
 ```
 
 To reset them to default (`true`):
@@ -97,6 +98,7 @@ To reset them to default (`true`):
 git config --unset --global diff-so-fancy.markEmptyLines
 git config --unset --global diff-so-fancy.changeHunkIndicators
 git config --unset --global diff-so-fancy.stripLeadingSymbols
+git config --unset --global diff-so-fancy.showStartLine
 ```
 
 ## Pro-tips

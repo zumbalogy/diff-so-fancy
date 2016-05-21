@@ -3,6 +3,7 @@
 use strict;
 use warnings FATAL => 'all';
 use File::Basename;
+use feature 'unicode_strings';
 
 my $remove_file_add_header    = 1;
 my $remove_file_delete_header = 1;
@@ -10,6 +11,7 @@ my $clean_permission_changes  = 1;
 my $change_hunk_indicators    = git_config_boolean("diff-so-fancy.changeHunkIndicators","true");
 my $strip_leading_indicators  = git_config_boolean("diff-so-fancy.stripLeadingSymbols","true");
 my $mark_empty_lines          = git_config_boolean("diff-so-fancy.markEmptyLines","true");
+my $show_start_line           = git_config_boolean("diff-so-fancy.showStartLine","true");
 
 #################################################################################
 
@@ -98,9 +100,18 @@ while (my $line = <>) {
 		my ($orig_offset, $orig_count, $new_offset, $new_count) = parse_hunk_header($hunk_header);
 		$last_file_seen = basename($last_file_seen);
 
-		# Figure out the start line
-		my $start_line = start_line_calc($new_offset,$new_count);
-		print "@ $last_file_seen:$start_line \@${bold}${dim_magenta}${remain}${reset_color}\n";
+    if ($show_start_line) {
+      # Figure out the start line
+  		my $start_line = start_line_calc($new_offset,$new_count);
+  		print "@ $last_file_seen:$start_line \@${bold}${dim_magenta}${remain}${reset_color}\n";
+    } else {
+      my $cols_num=`tput cols`;
+      my $start_str="printf '%";
+      my $end_str="s\n' | tr ' ' - | sed s/-/─/g";
+      my $str="$start_str$cols_num$end_str"
+      $str =~ s/\n//g;
+      system($str);
+    }
 	###################################
 	# Remove any new file permissions #
 	###################################
