@@ -38,6 +38,10 @@ while (my $line = <>) {
     next;
   }
 
+  if ($line =~ /^${ansi_color_regex}index .{7}\.\..{7}\s/) {
+    next;
+  }
+
   ######################
   # End pre-processing
   ######################
@@ -55,6 +59,7 @@ while (my $line = <>) {
   # Find the first file: --- a/README.md #
   ########################################
   } elsif (!$in_hunk && $line =~ /^$ansi_color_regex--- (\w\/)?(.+?)(\e|\t|$)/) {
+    print_line_across_terminal();
     $file_1 = $5;
 
     # Find the second file on the next line: +++ b/README.md
@@ -70,7 +75,13 @@ while (my $line = <>) {
 
     # If they're the same it's a modify
     if ($file_1 eq $file_2) {
-      print "modified: $file_1\n";
+      print "modified: $file_1 ";
+      print $reset_color;
+      print "\e[1;32m";
+      my $end_cmd='sed "s/[a-z(),]//g" | awk \'{printf $3 $2 " \033[31m" $5 $4}\'';
+      system("git diff --stat HEAD $file_1 | tail -1 | $end_cmd");
+      print "\n";
+      print $reset_color;
     # If the first is /dev/null it's a new file
     } elsif ($file_1 eq "/dev/null") {
       print "added: $file_2\n";
@@ -346,9 +357,12 @@ sub trim {
 }
 
 sub print_line_across_terminal {
+  print $reset_color;
+  print "\e[1;33m"; # Print out whatever color we're using
   my $cols_num=`tput cols`;
   my $end_str="s\n' | tr ' ' - | sed s/-/─/g";
   my $str="printf '%$cols_num$end_str";
   $str =~ s/\n//g;
   system($str);
+  print $reset_color;
 }
